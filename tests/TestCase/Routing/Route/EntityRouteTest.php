@@ -12,6 +12,7 @@
  * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Test\TestCase\Routing\Route;
 
 use Cake\Routing\Route\EntityRoute;
@@ -35,7 +36,7 @@ class EntityRouteTest extends TestCase
             'slug' => 'article-slug'
         ]);
 
-        $route = $route = new EntityRoute(
+        $route = new EntityRoute(
             '/articles/:category_id/:slug',
             [
                 '_name' => 'articlesView',
@@ -67,7 +68,7 @@ class EntityRouteTest extends TestCase
             'slug' => 'article-slug'
         ];
 
-        $route = $route = new EntityRoute(
+        $route = new EntityRoute(
             '/articles/:category_id/:slug',
             [
                 '_name' => 'articlesView',
@@ -104,5 +105,69 @@ class EntityRouteTest extends TestCase
             '_entity' => 'something-else',
             '_name' => 'articlesView'
         ]);
+    }
+
+    /**
+     * Test Entity directly in the array, not in _entity key
+     *
+     * @return void
+     */
+    public function testEntityInArray()
+    {
+        $entity = new Article([
+            'category_id' => 2,
+            'slug' => 'article-slug'
+        ]);
+
+        $route = new EntityRoute(
+            '/articles/:category_id/:slug',
+            [
+                '_name' => 'articlesView',
+                '_entity' => $entity,
+                'controller' => 'articles',
+                'action' => 'view'
+            ]
+        );
+
+        $result = $route->match([
+            $entity,
+            '_name' => 'articlesView',
+            'controller' => 'articles',
+            'action' => 'view'
+        ]);
+
+        $this->assertEquals('/articles/2/article-slug', $result);
+    }
+
+    /**
+     * Test Entity directly in the array, not in _entity key
+     *
+     * @return void
+     */
+    public function testEntityAsArrayInArray()
+    {
+        $entity = [
+            'category_id' => 2,
+            'slug' => 'article-slug'
+        ];
+
+        $route = new EntityRoute(
+            '/articles/:category_id/:slug',
+            [
+                '_name' => 'articlesView',
+                '_entity' => $entity,
+                'controller' => 'articles',
+                'action' => 'view'
+            ]
+        );
+
+        $result = $route->match([
+            $entity,
+            '_name' => 'articlesView',
+            'controller' => 'articles',
+            'action' => 'view'
+        ]);
+
+        $this->assertEquals('/articles/2/article-slug', $result);
     }
 }

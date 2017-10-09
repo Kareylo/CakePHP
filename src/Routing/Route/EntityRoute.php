@@ -38,6 +38,18 @@ class EntityRoute extends Route
      */
     public function match(array $url, array $context = [])
     {
+        // Check if there's an entity in the $url array
+        if (!isset($url['_entity'])) {
+            $entity = array_filter($url, function ($item) {
+                return $item instanceof ArrayAccess || is_array($item);
+            });
+            if ($entity && is_array($entity)) {
+                $key = array_search(array_shift($entity), $url);
+                $url['_entity'] = $url[$key];
+                unset($url[$key]);
+            }
+        }
+
         if (isset($url['_entity'])) {
             $this->_checkEntity($url['_entity']);
 
